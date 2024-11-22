@@ -13,5 +13,6 @@ if __name__ == "__main__":
     vectorizer = CountVectorizer(analyzer='word', ngram_range=(1, 4))
     
     vectorized_caracteristics = vectorizer.fit_transform(caracteristics)
+    X = vectorized_caracteristics.toarray()
     
-    print(vectorized_caracteristics)
+    print(X)
