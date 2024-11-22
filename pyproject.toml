@@ -1,0 +1,15 @@
+[project]
+name = "comocoto-xgeeks"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.5",
+    "jinja2>=3.1.4",
+    "litellm>=1.52.14",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
