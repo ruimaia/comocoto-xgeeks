@@ -1,0 +1,17 @@
+<div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
+	<div class="modal-underlay" _="on click trigger closeModal"></div>
+	<div class="modal-content">
+		<h1>Relevant attributes</h1>
+		We found the following relevant attributes in the data:
+        <form id="attribute-form" hx-post="/train-model" hx-trigger="submit">
+            {% for attribute in attributes %}
+                <label style="margin-left: 16px"><input type="checkbox" name="{{ attribute }}" checked> {{ attribute }}</label><br>
+            {% endfor %}
+            <button class="btn btn-primary" type="submit" _="on click trigger closeModal">Submit</button>
+        </form>
+		<br>
+		<br>
+        
+		<button class="btn btn-secondary" _="on click trigger closeModal" style="margin-top: 4px">Close</button>
+	</div>
+</div>
