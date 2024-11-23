@@ -1,14 +1,16 @@
 from pathlib import Path
 from typing import Any
-import boto3
 from fastapi import FastAPI, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fasthx import hx, page, Jinja
 from dotenv import load_dotenv
 
+import boto3
 import os
 import json
+import uvicorn
+
 
 ROOT_DIR = Path(__file__).parent.parent.parent
 TEMPLATES = Jinja2Templates(directory=ROOT_DIR / "app")
@@ -66,10 +68,9 @@ def popup_form():
     return {"attributes": attributes}
 
 @app.post("/train-model")
-def train_model(request: Request):
-    result = request.headers.get('Hx-Prompt')
-    print(result)
+async def train_model(request: Request):
+    form_data = await request.form()
+    print(form_data.keys())
     
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app)

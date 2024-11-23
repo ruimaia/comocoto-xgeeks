@@ -7,11 +7,11 @@
             {% for attribute in attributes %}
                 <label style="margin-left: 16px"><input type="checkbox" name="{{ attribute }}" checked> {{ attribute }}</label><br>
             {% endfor %}
-            <button class="btn btn-primary" type="submit" _="on click trigger closeModal">Submit</button>
+            
         </form>
 		<br>
 		<br>
-        
+        <button class="btn btn-primary" type="submit" form="attribute-form" _="on click trigger closeModal">Submit</button>
 		<button class="btn btn-secondary" _="on click trigger closeModal" style="margin-top: 4px">Close</button>
 	</div>
 </div>
