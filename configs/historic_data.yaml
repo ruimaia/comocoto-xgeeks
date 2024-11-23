@@ -1,8 +1,19 @@
 prompt_name: historic_budgets.j2
-ndatapoints: 1000
-company_type: window framing
+ndatapoints: 100
 output_file: data/historic_data.json
 required_fields: 
-  - email
+  - email_subject
+  - email_body
   - budget
   - caracteristics
+
+prompt_parameters:
+  type_of_business: window framing
+  feature_list:
+    - quantity
+    - length
+    - height
+    - color
+    - material
+    - finish
+    - glass_type

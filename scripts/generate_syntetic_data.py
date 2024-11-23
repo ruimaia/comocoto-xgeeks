@@ -53,7 +53,7 @@ def generate_datapoint(prompt: str, required_fields: list[str]) -> dict[str, Any
     return answer
 
 def generate_syntetic_data(
-    prompt_name:str, ndatapoints: int, company_type: str, output_file: str, required_fields: list[str]    
+    prompt_name:str, ndatapoints: int, prompt_parameters: dict, output_file: str, required_fields: list[str]    
 ) -> list[dict[str, Any]]:
     prompt = JINJA_ENV.get_template(prompt_name)
     output_file = ROOT_DIR / output_file
@@ -61,7 +61,7 @@ def generate_syntetic_data(
         futures = [
             executor.submit(
                 generate_datapoint, 
-                prompt.render(type_of_business=company_type),
+                prompt.render(**prompt_parameters),
                 required_fields
             ) 
             for _ in range(ndatapoints)
