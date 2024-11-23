@@ -1,0 +1,22 @@
+.list-group{
+    max-height: 800px;
+    margin-bottom: 10px;
+    overflow:scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+.spinner {
+    display: none;
+}
+  
+.htmx-request .spinner {
+    display: inline;
+}
+
+.htmx-request.spinner {
+    display: inline;
+}
+
+.htmx-request.spinner ~ .button-text {
+    display: none;
+}
