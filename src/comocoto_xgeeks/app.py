@@ -14,6 +14,7 @@ from jinja2 import Environment, FileSystemLoader
 import uvicorn
 
 from comocoto_xgeeks.bedrock import generate_datapoint
+from comocoto_xgeeks.knn_pipeline import DataProcessor, KNNTrainer
 
 
 ROOT_DIR = Path(__file__).parent.parent.parent
@@ -21,6 +22,7 @@ TEMPLATES = Jinja2Templates(directory=ROOT_DIR / "app")
 JINJA = Jinja(TEMPLATES)
 PROMPT_ENV = Environment(loader=FileSystemLoader(ROOT_DIR / "prompts/"))
 PARSE_REQUEST_PROMPT = PROMPT_ENV.get_template("parse_request.j2")
+CREATE_RESPONSE_PROMPT = PROMPT_ENV.get_template("create_response.j2")
 
 load_dotenv()
 BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
@@ -68,6 +70,24 @@ def extract_attributes(type_of_business: str, feature_list: list[str], request_t
         ["characteristics"]
     )
     return result
+
+def generate_response(type_of_business: str, request_text: str, budget: float) -> str:
+    prompt = CREATE_RESPONSE_PROMPT.render(
+        type_of_business=type_of_business,  
+        request_text=request_text,
+        budget=budget
+    )
+    result = generate_datapoint(
+        "mistral.mistral-large-2407-v1:0",
+        prompt,
+        {
+            "maxTokens": 1028,
+            "temperature": 0.0,
+            "topP": 0.9
+        },
+        ["email_body"]
+    )
+    return result['email_body']
         
         
 @app.get("/")
@@ -98,8 +118,16 @@ def popup_form():
 @JINJA.hx("training_results.html")
 async def train_model(request: Request):
     global SELECTED_ATTRIBUTES
+    global DATA
     form_data = await request.form()
     SELECTED_ATTRIBUTES = form_data.keys()
+
+    #dp = DataProcessor()
+    #x,y = dp.process_data(DATA, SELECTED_ATTRIBUTES)
+
+    #kt = KNNTrainer()
+    #kt.fit(x,y)
+
     training_metrics = {
         "placeholder1": 1,
         "placeholder2": 2,
@@ -114,7 +142,8 @@ def new_requests():
     REQUESTS = _fetch_data('new_data.json')
     return {"requests": REQUESTS}
     
-@app.get("/generate-budget", response_class=PlainTextResponse)
+@app.get("/generate-budget")
+@JINJA.hx("predictions_and_neighbours.html")
 def generate_budget(request_id: int):
     request = REQUESTS[request_id-1]
     parsed_attributes = extract_attributes(
@@ -122,8 +151,22 @@ def generate_budget(request_id: int):
         SELECTED_ATTRIBUTES, 
         request["email_body"]
     )
+    neighbours = DATA[:3]
+    neighbours = [{**neighbour, "budget": sum([product['budget'] for product in neighbour['caracteristics']])} for neighbour in neighbours]
+    budget=5000
+    generated_response = generate_response("window framing", request["email_body"], budget)
     
-    return json.dumps(parsed_attributes).replace("\n", "<br>")
+    return {"response_text": generated_response, "neighbours": neighbours, "request_id": request_id}
+
+@app.get("/popup-message")
+@JINJA.hx("popup_message.html")
+def popup_form(button: str, request_id: int):
+    modal_message = 'Your email has been sent.' if button=='send' else 'The email has been deleted.'
+    return {"modal_message": modal_message, "request_id": request_id}
+
+@app.delete("/delete-request", response_class=PlainTextResponse)
+def popup_form():
+    return ""
     
 if __name__ == "__main__":
     uvicorn.run(app)
