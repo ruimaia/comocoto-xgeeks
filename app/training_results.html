@@ -1,0 +1,27 @@
+<div id="training_results">
+<div class="text-center">
+    <h1>Your training is complete.</h1>
+</div>
+<div class="container">
+    <table class="table table-secondary">
+        <thead>
+          <tr>
+            <th scope="col">Metric</th>
+            <th scope="col">Value</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for key, value in training_metrics.items() %}
+	            <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="text-center" style="margin: 16px">
+    <button type="button" class="btn btn-danger" hx-get="/" hx-target="body" hx-swap="outerHTML">Back</button>
+    <button type="button" class="btn btn-success" hx-get="/popup-form" hx-target="body" hx-swap="beforeend">OK</button>
+</div>
+</div>

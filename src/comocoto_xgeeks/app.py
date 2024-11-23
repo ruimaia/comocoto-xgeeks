@@ -76,9 +76,16 @@ def new_requests():
     return {"requests": REQUESTS}
 
 @app.post("/train-model")
+@jinja.hx("training_results.html")
 async def train_model(request: Request):
     form_data = await request.form()
     print(form_data.keys())
+    training_metrics = {
+        "placeholder1": 1,
+        "placeholder2": 2,
+        "placeholder3": 3
+    }
+    return {"training_metrics": training_metrics}
     
 @app.get("/generate-budget")
 def generate_budget(request_id: int):

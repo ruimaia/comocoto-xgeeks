@@ -3,7 +3,7 @@
 	<div class="modal-content">
 		<h1>Relevant attributes</h1>
 		We found the following relevant attributes in the data:
-        <form id="attribute-form" hx-post="/train-model" hx-trigger="submit">
+        <form id="attribute-form" hx-post="/train-model" hx-trigger="submit" hx-target="#historical_data" hx-swap="outerHTML">
             {% for attribute in attributes %}
                 <label style="margin-left: 16px"><input type="checkbox" name="{{ attribute }}" checked> {{ attribute }}</label><br>
             {% endfor %}

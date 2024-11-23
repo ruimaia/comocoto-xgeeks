@@ -1,3 +1,4 @@
+<div id="historical_data">
 <div class="list-group">
     {% for datapoint in historical_data %}
         <a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
@@ -15,4 +16,5 @@
 </div>
 <div class="text-center" style="margin: 16px">
     <button type="button" class="btn btn-outline-success btn-lg" hx-get="/popup-form" hx-target="body" hx-swap="beforeend">Train</button>
+</div>
 </div>
