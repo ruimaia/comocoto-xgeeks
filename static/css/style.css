@@ -5,6 +5,12 @@
     -webkit-overflow-scrolling: touch;
 }
 
+.box {
+    float: left;
+    width: 50%; /* Adjust width as needed */
+    padding: 20px;
+}
+
 .spinner {
     display: none;
 }
@@ -20,8 +26,9 @@
 .htmx-request.spinner ~ .button-text {
     display: none;
 }
- /***** MODAL DIALOG ****/
- #modal {
+
+/***** MODAL DIALOG ****/
+#modal {
     /* Underlay covers entire screen. */
     position: fixed;
     top:0px;

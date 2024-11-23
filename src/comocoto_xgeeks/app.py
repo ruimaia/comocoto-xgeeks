@@ -20,6 +20,7 @@ load_dotenv()
 BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
 S3_CLIENT = boto3.resource("s3")
 DATA = None
+REQUESTS = None
 
 # Create the app.
 app = FastAPI()
@@ -30,8 +31,8 @@ app.mount(
     name="static",
 )
 
-def _fetch_data() -> list[str, Any]:
-    content_object = S3_CLIENT.Object(BUCKET_NAME, 'historic_data.json')
+def _fetch_data(file_name) -> list[str, Any]:
+    content_object = S3_CLIENT.Object(BUCKET_NAME, file_name)
     file_content = content_object.get()['Body'].read().decode('utf-8')
     json_content = json.loads(file_content)
     return json_content
@@ -52,7 +53,7 @@ def index() -> None:
 @jinja.hx("historical_data_list.html")
 def fetch_data() -> str:
     global DATA
-    DATA = _fetch_data()
+    DATA = _fetch_data('historic_data.json')
     return {"historical_data": DATA}
 
 @app.get("/popup-form")
@@ -67,10 +68,22 @@ def popup_form():
     ])
     return {"attributes": attributes}
 
+@app.get("/new-requests")
+@jinja.hx("new_requests.html")
+def new_requests():
+    global REQUESTS
+    REQUESTS = _fetch_data('new_data.json')
+    return {"requests": REQUESTS}
+
 @app.post("/train-model")
 async def train_model(request: Request):
     form_data = await request.form()
     print(form_data.keys())
+    
+@app.get("/generate-budget")
+def generate_budget(request_id: int):
+    request = REQUESTS[request_id-1]
+    return "AQUI esta o budget para o email: " + request["email_body"]
     
 if __name__ == "__main__":
     uvicorn.run(app)

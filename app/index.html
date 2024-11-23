@@ -21,9 +21,13 @@
         </svg>
         Budger
     </div>
-    <button type="button" class="btn btn-primary" hx-get="/fetch-data" hx-swap="outerHTML" hx-indicator="#spinner" style="margin: 16px">
-        <span class="spinner" id="spinner">Loading...</span>
-        <span class="button-text">Connect to your inbox</span>
-    </button>
+    <div id="main-content">
+        <button type="button" class="btn btn-primary" hx-get="/fetch-data" hx-swap="outerHTML" hx-indicator="#spinner" style="margin: 16px">
+            <span class="spinner" id="spinner">Loading...</span>
+            <span class="button-text">Connect to your inbox</span>
+        </button>
+		<button class="btn btn-secondary" hx-get="/new-requests" hx-swap="outerHTML" hx-target="#main-content"> Testing </button>
+
+    </div>
 </body>
 </html>

@@ -2,7 +2,8 @@ prompt_name: new_requests.j2
 ndatapoints: 100
 output_file: new_data.json
 required_fields: 
-  - email
+  - email_subject
+  - email_body
 
 prompt_parameters:
   type_of_business: window framing
