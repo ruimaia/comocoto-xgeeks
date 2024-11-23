@@ -1,0 +1,6 @@
+prompt_name: new_requests.j2
+ndatapoints: 100
+company_type: window framing
+output_file: data/new_data.json
+required_fields: 
+  - email

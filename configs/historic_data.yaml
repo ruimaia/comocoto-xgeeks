@@ -1,0 +1,8 @@
+prompt_name: historic_budgets.j2
+ndatapoints: 1000
+company_type: window framing
+output_file: data/historic_data.json
+required_fields: 
+  - email
+  - budget
+  - caracteristics
