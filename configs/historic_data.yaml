@@ -4,7 +4,7 @@ output_file: historic_data.json
 required_fields: 
   - email_subject
   - email_body
-  - caracteristics
+  - characteristics
 
 prompt_parameters:
   type_of_business: window framing
