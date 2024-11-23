@@ -14,9 +14,13 @@
 .spinner {
     display: none;
 }
-  
-.htmx-request .spinner {
-    display: inline;
+
+.spinner-border {
+    display: none;
+}
+
+.htmx-request .spinner-border {
+    display: inline-flex;
 }
 
 .htmx-request.spinner {
@@ -24,6 +28,10 @@
 }
 
 .htmx-request.spinner ~ .button-text {
+    display: none;
+}
+
+.htmx-request#spinner ~ #request-budget {
     display: none;
 }
 

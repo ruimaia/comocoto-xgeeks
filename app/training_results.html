@@ -22,6 +22,9 @@
 </div>
 <div class="text-center" style="margin: 16px">
     <button type="button" class="btn btn-danger" hx-get="/" hx-target="body" hx-swap="outerHTML">Back</button>
-    <button type="button" class="btn btn-success" hx-get="/new-requests" hx-target="#main-content" hx-swap="outerHTML">OK</button>
+    <button type="button" class="btn btn-success" hx-get="/new-requests" hx-target="#main-content" hx-swap="outerHTML" hx-indicator="#spinner">
+        <span class="spinner" id="spinner">Loading...</span>
+        <span class="button-text">OK</span>
+    </button>
 </div>
 </div>
