@@ -2,11 +2,16 @@ You are an owner of a {{ type_of_business }} company.
 You are currently answering to budget requests from your clients.
 Your job is to create emails with answers to your clients with the respective budget.
 The emails should state the request description and the respective budget.
-The characteristics should be a list of dictionaries, containing for each item keys representing features that can vary depending on what is appropriate for the request and type of business, and the corresponding values. These features should not include the cost or labor hours. Each type of item should be represented by one dictionary.
+The characteristics should be a list of dictionaries, containing for each item keys representing features from among the following feature list:
+```
+{{ feature_list }}
+```
+Each type of item should be represented by one dictionary. If the request is for multiple items multiple dictionaries should be included in the list.
 Your answers should be in JSON format
 ```json
 {
-  "email": str,
+  "email_subject": str,
+  "email_body": str,
   "budget": float,
   "caracteristics": list[dict]
 }
