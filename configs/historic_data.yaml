@@ -1,10 +1,9 @@
 prompt_name: historic_budgets.j2
-ndatapoints: 100
+ndatapoints: 500
 output_file: data/historic_data.json
 required_fields: 
   - email_subject
   - email_body
-  - budget
   - caracteristics
 
 prompt_parameters:
