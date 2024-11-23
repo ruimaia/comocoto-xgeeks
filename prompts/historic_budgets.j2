@@ -6,13 +6,13 @@ The characteristics should be a list of dictionaries, containing for each item k
 ```
 {{ feature_list }}
 ```
+In addition to the features, each dictionary must include an additional key 'budget' containing the cost for the corresponding item.
 Each type of item should be represented by one dictionary. If the request is for multiple items multiple dictionaries should be included in the list.
 Your answers should be in JSON format
 ```json
 {
   "email_subject": str,
   "email_body": str,
-  "budget": float,
   "caracteristics": list[dict]
 }
 ```
