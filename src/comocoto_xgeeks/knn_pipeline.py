@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import re
 from sklearn.impute import KNNImputer
+from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.pipeline import Pipeline
@@ -13,7 +14,7 @@ class DataProcessor:
         self.encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore")
         self.scaler = StandardScaler()
 
-    def _json_to_dataframe(data: dict, features: list[str]) -> pd.DataFrame:
+    def _json_to_dataframe(self, data: dict, features: list[str]) -> pd.DataFrame:
         rows = []
         for datapoint in data:
             for c_dict in datapoint['caracteristics']:
@@ -24,7 +25,7 @@ class DataProcessor:
 
         return df_raw
 
-    def _norm_text(text):
+    def _norm_text(self, text):
         if text is not None:
             norm_text = str(text)
             norm_text = norm_text.lower()
@@ -36,7 +37,7 @@ class DataProcessor:
         else:
             return None
         
-    def _extract_number(text):
+    def _extract_number(self, text):
         text = str(text)
         match = re.search(r'\d+\.?\d*', text)
         return match.group(0) if match else None
@@ -50,7 +51,7 @@ class DataProcessor:
             4. Hard coded numerical labels
         """
         all_features = selected_features + [label]
-        numerical_features = ["quantity", "height", "distance"]
+        numerical_features = ["quantity", "height", "length"]
         df_raw = self._json_to_dataframe(data, all_features)
         df = df_raw.copy()
 
@@ -80,6 +81,7 @@ class DataProcessor:
 
         # Scale numerical features
         df[numerical_features] = self.scaler.fit_transform(df[numerical_features])
+        df[numerical_features] = self.imputer.fit_transform(df[numerical_features])
 
         X = df.values
 
@@ -87,10 +89,11 @@ class DataProcessor:
 
 
 class KNNTrainer:
-    def __init__(self, param_grid: list[int] = [3,4,5], cv: int = 3):
+    def __init__(self, param_grid: dict[str:list] = {"n_neighbors": [2,3,4,5]}, cv: int = 3):
         self.model = KNeighborsRegressor()
         self.param_grid = param_grid
         self.cv = cv
+        self.grid_search = None
         self.X_train = None
         self.X_test = None
         self.y_train = None
@@ -98,6 +101,20 @@ class KNNTrainer:
 
     def fit(self, X, y):
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        self.grid_search = GridSearchCV(self.model, self.param_grid, cv=self.cv, n_jobs=-1, refit=True)
+        self.grid_search.fit(self.X_train, self.y_train)
+
+        self.model = self.grid_search.best_estimator_
     
     def predict(self, X):
-        self.model.predict(X)
+        distances, indices = self.model.kneighbors(X, n_neighbors=3)
+        preds = self.model.predict(X)
+        return indices, preds
+    
+    def evaluate(self):
+        y_pred = self.model.predict(self.X_test)
+        mse = mean_squared_error(self.y_test, y_pred)
+        r2 = r2_score(self.y_test, y_pred)
+
+        return mse, r2
