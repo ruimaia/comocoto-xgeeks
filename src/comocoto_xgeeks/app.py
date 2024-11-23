@@ -68,9 +68,16 @@ def popup_form():
     return {"attributes": attributes}
 
 @app.post("/train-model")
+@jinja.hx("training_results.html")
 async def train_model(request: Request):
     form_data = await request.form()
     print(form_data.keys())
+    training_metrics = {
+        "placeholder1": 1,
+        "placeholder2": 2,
+        "placeholder3": 3
+    }
+    return {"training_metrics": training_metrics}
     
 if __name__ == "__main__":
     uvicorn.run(app)
