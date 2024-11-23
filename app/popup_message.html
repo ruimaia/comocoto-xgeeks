@@ -1,0 +1,7 @@
+<div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
+	<div class="modal-underlay" _="on click trigger closeModal"></div>
+	<div class="modal-content">
+		{{ modal_message }}
+        <button class="btn btn-primary mt-3 text-center" _="on click trigger closeModal" hx-delete="/delete-request" hx-target="#request-{{ request_id }}" hx-swap="outerHTML swap:1s">OK</button>
+	</div>
+</div>
