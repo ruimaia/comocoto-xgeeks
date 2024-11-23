@@ -16,24 +16,24 @@
 </head>
 <body>
     <header class="p-3 text-bg-dark">
-        <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <div style="cursor: pointer" hx-get="/" hx-target="body" hx-swap="outerHTML" hx-trigger="click">
-                    <img src="{{ url_for('static', path='/svg/badger.svg') }}" width="40" height="32" alt="Badger" style="filter: invert(1);">
-                <div>
-            </div>
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <div style="cursor: pointer" hx-get="/" hx-target="body" hx-swap="outerHTML" hx-trigger="click">
+                <img src="{{ url_for('static', path='/svg/badger.svg') }}" width="40" height="32" alt="Badger" style="filter: invert(1);">
+            <div>
         </div>
     </header>
-    <div class="px-4 py-5 my-5 text-center" id="main-content">
-        <object type="image/svg+xml" data="{{ url_for('static', path='/svg/badger.svg') }}" width="128" height="128"></object>
-        <h1 class="display-5 fw-bold">Budger</h1>
-        <div class="col-lg-6 mx-auto">
-            <p class="lead mb-4">Budger is an innovative app that analyzes previous budget requests to automatically respond to new ones, saving you time and effort. Experience seamless budgeting with Budger - your financial assistant!</p>
-            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <button type="button" class="btn btn-primary btn-lg px-4 gap-3"  hx-get="/fetch-data" hx-swap="outerHTML" hx-indicator="#spinner" style="margin: 16px" hx-target="#main-content">
-                <span class="spinner" id="spinner">Loading...</span>
-                <span class="button-text">Start here!</span>
-            </button>
+    <div id="main-content">
+        <div class="px-4 py-5 my-5 text-center" id="sub-content">
+            <object type="image/svg+xml" data="{{ url_for('static', path='/svg/badger.svg') }}" width="128" height="128"></object>
+            <h1 class="display-5 fw-bold">Budger</h1>
+            <div class="col-lg-6 mx-auto">
+                <p class="lead mb-4">Budger is an innovative app that analyzes previous budget requests to automatically respond to new ones, saving you time and effort. Experience seamless budgeting with Budger - your financial assistant!</p>
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <button type="button" class="btn btn-primary btn-lg px-4 gap-3"  hx-get="/fetch-data" hx-swap="outerHTML" hx-indicator="#spinner" style="margin: 16px" hx-target="#sub-content">
+                    <span class="spinner" id="spinner">Loading...</span>
+                    <span class="button-text">Start here!</span>
+                </button>
+                </div>
             </div>
         </div>
     </div>
