@@ -14,6 +14,8 @@ dependencies = [
     "tqdm>=4.67.0",
     "scikit-learn>=1.5.2",
     "fasthx>=2.0.2",
+    "jsonargparse>=4.34.0",
+    "pandas>=2.2.3",
 ]
 
 [build-system]
