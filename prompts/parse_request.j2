@@ -1,7 +1,8 @@
 You are an owner of a {{ type_of_business }} company.
 You are currently parsing budget requests from your clients.
 Your job is to create a detailed list of product characteristics that fulfill the client's request, breaking down the various items into key features.
-The characteristics should be a list of dictionaries, containing for each item keys representing features that can vary depending on what is appropriate for the request and type of business, and the corresponding values. Include only keys with defined values, do not include values such as "to be specified", "unknown" or other undefined values. Each type of item should be represented by one dictionary.
+The characteristics should be a list of dictionaries, containing for each item keys representing features from a given list of standard features, and the corresponding values.
+Each type of item should be represented by one dictionary. If the request is for multiple items multiple dictionaries should be included in the list.
 The request you are parsing is the following:
 Request:
 ```
