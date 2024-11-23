@@ -12,6 +12,8 @@ import boto3
 import ast
 import json
 
+from comocoto_xgeeks.bedrock import generate_datapoint
+
 
 ROOT_DIR = Path(__file__).parent.parent
 JINJA_ENV = Environment(loader=FileSystemLoader(ROOT_DIR / "prompts/"))
@@ -21,41 +23,14 @@ region = os.getenv("AWS_DEFAULT_REGION")
 BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
 
 
-model_id = "mistral.mistral-large-2407-v1:0"
-bedrock_client = boto3.client(service_name='bedrock-runtime', region_name=region)
 s3_client = boto3.resource("s3")
 
+model_id = "mistral.mistral-large-2407-v1:0"
 inference_config = {
     "maxTokens": 1028,
     "temperature": 1.0,
     "topP": 0.9
 }
-
-def extract_json(resp: str):
-    return ast.literal_eval(resp.split("```json")[1].split("```")[0])
-
-
-def generate_datapoint(prompt: str, required_fields: list[str]) -> dict[str, Any]:
-    messages = [
-        {
-            "role": "user", 
-            "content": [
-                {"text": prompt}
-            ]
-        }
-    ]
-    params = {
-        "modelId": model_id,
-        "messages": messages,
-        "inferenceConfig": inference_config
-    }
-    resp = bedrock_client.converse(**params)
-    try:
-        answer = extract_json(resp["output"]["message"]["content"][0]["text"])
-        assert all([k in answer for k in required_fields])
-    except:
-        answer = ""
-    return answer
 
 def generate_syntetic_data(
     prompt_name:str, ndatapoints: int, prompt_parameters: dict, output_file: str, required_fields: list[str]    
@@ -65,8 +40,10 @@ def generate_syntetic_data(
         futures = [
             executor.submit(
                 generate_datapoint, 
+                model_id,
                 prompt.render(**prompt_parameters),
-                required_fields
+                required_fields,
+                inference_config
             ) 
             for _ in range(ndatapoints)
         ]
