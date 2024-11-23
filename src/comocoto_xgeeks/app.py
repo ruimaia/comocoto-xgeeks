@@ -21,6 +21,7 @@ TEMPLATES = Jinja2Templates(directory=ROOT_DIR / "app")
 JINJA = Jinja(TEMPLATES)
 PROMPT_ENV = Environment(loader=FileSystemLoader(ROOT_DIR / "prompts/"))
 PARSE_REQUEST_PROMPT = PROMPT_ENV.get_template("parse_request.j2")
+CREATE_RESPONSE_PROMPT = PROMPT_ENV.get_template("create_response.j2")
 
 load_dotenv()
 BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
@@ -68,6 +69,24 @@ def extract_attributes(type_of_business: str, feature_list: list[str], request_t
         ["characteristics"]
     )
     return result
+
+def generate_response(type_of_business: str, request_text: str, budget: float) -> str:
+    prompt = CREATE_RESPONSE_PROMPT.render(
+        type_of_business=type_of_business,  
+        request_text=request_text,
+        budget=budget
+    )
+    result = generate_datapoint(
+        "mistral.mistral-large-2407-v1:0",
+        prompt,
+        {
+            "maxTokens": 1028,
+            "temperature": 0.0,
+            "topP": 0.9
+        },
+        ["email_body"]
+    )
+    return result['email_body']
         
         
 @app.get("/")
@@ -122,8 +141,10 @@ def generate_budget(request_id: int):
         SELECTED_ATTRIBUTES, 
         request["email_body"]
     )
+    budget=5000
+    generated_response = generate_response("window framing", request["email_body"], budget)
     
-    return json.dumps(parsed_attributes).replace("\n", "<br>")
+    return generated_response.replace("\n", "<br>")
     
 if __name__ == "__main__":
     uvicorn.run(app)
