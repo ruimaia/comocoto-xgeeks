@@ -3,6 +3,7 @@ from typing import Any
 import boto3
 from fastapi import FastAPI, Request, Form
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from fasthx import hx, page, Jinja
 from dotenv import load_dotenv
 
@@ -21,6 +22,12 @@ DATA = None
 # Create the app.
 app = FastAPI()
 
+app.mount(
+    "/static",
+    StaticFiles(directory=ROOT_DIR / "static"),
+    name="static",
+)
+
 def _fetch_data() -> list[str, Any]:
     content_object = S3_CLIENT.Object(BUCKET_NAME, 'historic_data.json')
     file_content = content_object.get()['Body'].read().decode('utf-8')
@@ -28,7 +35,9 @@ def _fetch_data() -> list[str, Any]:
     return json_content
 
 def render_index(result: list[dict[str, str]], *, context: dict[str, Any], request: Request) -> str:
-    html = TEMPLATES.get_template("index.html").render()
+    html = TEMPLATES.TemplateResponse(
+        "index.html", {"request": request}
+    )
     return html
         
         

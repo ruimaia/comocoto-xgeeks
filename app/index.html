@@ -101,6 +101,7 @@
             100% {transform: scale(0.9);}
         }
     </style>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://unpkg.com/htmx.org@2.0.3"></script>
@@ -115,6 +116,9 @@
         </svg>
         Budger
     </div>
-    <button type="button" class="btn btn-primary" hx-get="/fetch-data" hx-swap="outerHTML" style="margin: 16px">Connect to your inbox</button>
+    <button type="button" class="btn btn-primary" hx-get="/fetch-data" hx-swap="outerHTML" hx-indicator="#spinner" style="margin: 16px">
+        <span class="spinner" id="spinner">Loading...</span>
+        <span class="button-text">Connect to your inbox</span>
+    </button>
 </body>
 </html>
