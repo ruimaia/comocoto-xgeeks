@@ -14,7 +14,7 @@ NUMERICAL_FEATURES = ["quantity", "height", "length"]
 def json_to_dataframe(data: list, features: list[str]) -> pd.DataFrame:
     rows = []
     for idx, datapoint in enumerate(data):
-        for c_dict in datapoint['caracteristics']:
+        for c_dict in datapoint['characteristics']:
             row = {key: c_dict[key] if key in c_dict else None for key in features}
             row["data_id"] = idx
             rows.append(row)

@@ -111,7 +111,7 @@ def popup_form():
     attributes = set([
         attribute
         for data in DATA
-        for product in data["caracteristics"]
+        for product in data["characteristics"]
         for attribute in product.keys()
         if attribute not in ["budget"]
     ])
@@ -156,12 +156,12 @@ def generate_budget(request_id: int):
         request["email_body"]
     )
     
-    new_df = json_to_dataframe([{"caracteristics": parsed_attributes["characteristics"]}], SELECTED_ATTRIBUTES)
+    new_df = json_to_dataframe([parsed_attributes], SELECTED_ATTRIBUTES)
     prod_ids, budget = BUDGET_ESTIMATOR.predict(new_df)
     
     neighbours_ids = DATA_DF.loc[prod_ids.flatten().tolist()]["data_id"].unique().tolist()
     neighbours = [DATA[id] for id in neighbours_ids[:3]]
-    neighbours = [{**neighbour, "budget": sum([product['budget'] for product in neighbour['caracteristics']])} for neighbour in neighbours]
+    neighbours = [{**neighbour, "budget": sum([product['budget'] for product in neighbour['characteristics']])} for neighbour in neighbours]
     generated_response = generate_response("window framing", request["email_body"], budget.sum())
     
     return {"response_text": generated_response, "neighbours": neighbours, "request_id": request_id}

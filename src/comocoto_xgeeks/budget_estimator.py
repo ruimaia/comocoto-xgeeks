@@ -9,10 +9,10 @@ if __name__ == "__main__":
     with open(ROOT_DIR / "data" / "historic_data.json") as f:
         data = json.load(f)
         
-    caracteristics = [" ".join(datapoint["caracteristics"]) for datapoint in data]
+    characteristics = [" ".join(datapoint["characteristics"]) for datapoint in data]
     vectorizer = CountVectorizer(analyzer='word', ngram_range=(1, 4))
     
-    vectorized_caracteristics = vectorizer.fit_transform(caracteristics)
-    X = vectorized_caracteristics.toarray()
+    vectorized_characteristics = vectorizer.fit_transform(characteristics)
+    X = vectorized_characteristics.toarray()
     
     print(X)

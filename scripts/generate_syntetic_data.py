@@ -33,7 +33,7 @@ inference_config = {
 }
 
 def generate_syntetic_data(
-    prompt_name:str, ndatapoints: int, prompt_parameters: dict, output_file: str, required_fields: list[str]    
+    prompt_name:str, ndatapoints: int, prompt_parameters: dict[str, Any], output_file: str, required_fields: list[str]    
 ) -> list[dict[str, Any]]:
     prompt = JINJA_ENV.get_template(prompt_name)
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
@@ -42,8 +42,8 @@ def generate_syntetic_data(
                 generate_datapoint, 
                 model_id,
                 prompt.render(**prompt_parameters),
-                required_fields,
-                inference_config
+                inference_config,
+                required_fields
             ) 
             for _ in range(ndatapoints)
         ]
