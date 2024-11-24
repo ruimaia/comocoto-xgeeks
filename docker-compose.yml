@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  budger-app:
+    container_name: budger
+    restart: always
+    env_file: .env
+    build: .
+    networks:
+      - db_network
+      - web_network
+  nginx:
+    container_name: nginx
+    restart: always
+    image: "nginx:latest"
+    ports:
+      - "85:85"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    networks:
+      - web_network
+    depends_on: 
+      - budger-app
+networks:
+  db_network:
+    driver: bridge
+  web_network:
+    driver: bridge
+ 
