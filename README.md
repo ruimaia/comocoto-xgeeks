@@ -27,6 +27,11 @@ Our solution combines **LLMs** and **ML** to address this bottleneck:
 
 ![](assets/diagram.png)
 
-**Data flow**: Structured or unstructured historical data is processed by an LLM to obtain structured data which is then used to train the prediction model (1). When a client submits a new budget request it is similarly processed by the LLM with the resulting structured data being fed into the prediction model (2) to obtain a budget prediction. The budget prediction is returned to the LLM (3) along with the budget request to create a suggested response that includes the predicted budget.
+**Data flow**: Structured or unstructured historical data (in this demo only from an S3 bucket) is processed by an LLM to obtain structured data which is then used to train the prediction model (1). When a client submits a new budget request it is similarly processed by the LLM with the resulting structured data being fed into the prediction model (2) to obtain a budget prediction. The budget prediction is returned to the LLM (3) along with the budget request to create a suggested response that includes the predicted budget.
 
 This proof-of-concept showcases how AI can help small-to-mid-sized businesses optimize their workflows, enhance customer satisfaction, and unlock growth opportunities.
+
+## Future Work
+- Improve support for multiple user sessions;
+- Improving the prediction model in order to improve the budget estimation;
+- Adding connectors for additional input sources.
