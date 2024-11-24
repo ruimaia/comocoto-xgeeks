@@ -1,3 +1,7 @@
+# 🦡 Budger: Your financial friend!
+
+![](assets/demo.gif)
+
 ## Description  
 This application is designed to help businesses efficiently manage and respond to budget requests. By leveraging **Large Language Models (LLMs)** and **Machine Learning (ML)**, the solution parses historical email interactions into structured data and predicts budgets for new customer requests. The approach ensures timely and informed responses, even for businesses with limited resources.  
 
