@@ -13,9 +13,10 @@ NUMERICAL_FEATURES = ["quantity", "height", "length"]
 
 def json_to_dataframe(data: list, features: list[str]) -> pd.DataFrame:
     rows = []
-    for datapoint in data:
+    for idx, datapoint in enumerate(data):
         for c_dict in datapoint['caracteristics']:
             row = {key: c_dict[key] if key in c_dict else None for key in features}
+            row["data_id"] = idx
             rows.append(row)
 
     df = pd.DataFrame(data=rows)
@@ -113,6 +114,7 @@ class BudgetEstimatorPipeline:
         """
         Fit the model pipeline to the training data.
         """
+        X_train = X_train[self.text_cols]
         y_train = self.target_transformer.transform(y_train)
         self.model_pipeline.fit(X_train, y_train)
     
@@ -120,24 +122,28 @@ class BudgetEstimatorPipeline:
         """
         Make predictions on new data using the fitted pipeline.
         """
-        return self.model_pipeline.predict(X_new)
-        #distances, indices = self.model_pipeline.named_steps['model'].kneighbors(X_new, n_neighbors=3)
-        #preds = self.model_pipeline.predict(X_new)
-        #return indices, preds
+        # return self.model_pipeline.predict(X_new)
+        X_new = X_new[self.text_cols]
+        distances, indices = self.model_pipeline.named_steps["model"].kneighbors(self.model_pipeline.named_steps["preprocessor"].transform(X_new), n_neighbors=3)
+        preds = self.model_pipeline.predict(X_new)
+        return indices, preds
     
     def evaluate(self, X: pd.DataFrame, y: pd.Series):
-        y_pred = self.predict(X)
+        X = X[self.text_cols]
+        y_pred = self.predict(X)[-1]
         y = self.target_transformer.transform(y)
 
         mse = mean_squared_error(y, y_pred)
+        rmse = np.sqrt(mse)
         r2 = r2_score(y, y_pred)
 
-        return mse, r2
+        return mse, rmse, r2
 
     def transform(self, X: pd.DataFrame):
         """
         Transform the input data without fitting the model (for preprocessing only).
         """
+        X = X[self.text_cols]
         return self.preprocessor.transform(X)
     
     def tune_hyperparameters(self, X_train: pd.DataFrame, y_train: pd.Series, param_grid: dict = {"model__n_neighbors": [3,4,5]}, cv: int = 3):

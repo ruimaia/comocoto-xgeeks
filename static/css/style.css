@@ -31,7 +31,7 @@
     display: none;
 }
 
-.htmx-request#spinner ~ #request-budget {
+.htmx-request#spinner-load ~ #request-budget {
     display: none;
 }
 

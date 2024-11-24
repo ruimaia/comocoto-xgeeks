@@ -11,10 +11,11 @@ import boto3
 import os
 import json
 from jinja2 import Environment, FileSystemLoader
+import pandas as pd
 import uvicorn
 
 from comocoto_xgeeks.bedrock import generate_datapoint
-from comocoto_xgeeks.knn_pipeline import DataProcessor, KNNTrainer
+from comocoto_xgeeks.knn_pipeline import BudgetEstimatorPipeline, json_to_dataframe
 
 
 ROOT_DIR = Path(__file__).parent.parent.parent
@@ -28,8 +29,10 @@ load_dotenv()
 BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
 S3_CLIENT = boto3.resource("s3")
 DATA = None
+DATA_DF = None
 REQUESTS = None
 SELECTED_ATTRIBUTES = None
+BUDGET_ESTIMATOR = None
 
 # Create the app.
 app = FastAPI()
@@ -119,19 +122,20 @@ def popup_form():
 async def train_model(request: Request):
     global SELECTED_ATTRIBUTES
     global DATA
+    global DATA_DF
+    global BUDGET_ESTIMATOR
+    
     form_data = await request.form()
-    SELECTED_ATTRIBUTES = form_data.keys()
-
-    #dp = DataProcessor()
-    #x,y = dp.process_data(DATA, SELECTED_ATTRIBUTES)
-
-    #kt = KNNTrainer()
-    #kt.fit(x,y)
+    SELECTED_ATTRIBUTES = list(form_data.keys())
+    BUDGET_ESTIMATOR = BudgetEstimatorPipeline(SELECTED_ATTRIBUTES)
+    DATA_DF = json_to_dataframe(DATA, SELECTED_ATTRIBUTES + ["budget"])
+    BUDGET_ESTIMATOR.fit(DATA_DF.drop(columns=["budget"]), DATA_DF["budget"])
+    mse, rmse, r2 = BUDGET_ESTIMATOR.evaluate(DATA_DF.drop(columns=["budget"]), DATA_DF["budget"])
 
     training_metrics = {
-        "placeholder1": 1,
-        "placeholder2": 2,
-        "placeholder3": 3
+        "Mean Squared Error": mse,
+        "Root Mean Squared Error": rmse,
+        "R2": r2
     }
     return {"training_metrics": training_metrics}
 
@@ -151,10 +155,14 @@ def generate_budget(request_id: int):
         SELECTED_ATTRIBUTES, 
         request["email_body"]
     )
-    neighbours = DATA[:3]
+    
+    new_df = json_to_dataframe([{"caracteristics": parsed_attributes["characteristics"]}], SELECTED_ATTRIBUTES)
+    prod_ids, budget = BUDGET_ESTIMATOR.predict(new_df)
+    
+    neighbours_ids = DATA_DF.loc[prod_ids.flatten().tolist()]["data_id"].unique().tolist()
+    neighbours = [DATA[id] for id in neighbours_ids[:3]]
     neighbours = [{**neighbour, "budget": sum([product['budget'] for product in neighbour['caracteristics']])} for neighbour in neighbours]
-    budget=5000
-    generated_response = generate_response("window framing", request["email_body"], budget)
+    generated_response = generate_response("window framing", request["email_body"], budget.sum())
     
     return {"response_text": generated_response, "neighbours": neighbours, "request_id": request_id}
 
